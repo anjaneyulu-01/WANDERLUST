@@ -8,16 +8,18 @@ const listingSchema = new Schema({
     required:true
   },
   description:String,
-   image: {
-    filename: {
-      type: String,
-      default: "listingimage"
-    },
-    url: {
-      type: String,
-      default: "https://thumbs.dreamstime.com/z/naruto-uzomaki-d-model-picture-shows-famous-character-anime-uzumaki-forms-generate-ai-280095429.jpg"
-    }
+ image: {
+  filename: {
+    type: String,
+    default: "listingimage"
   },
+  url: {
+    type: String,
+    default: "https://s-i.huffpost.com/gen/1168191/images/o-BEACH-HOUSES-facebook.jpg",
+    set: v => v === "" ? undefined : v
+  }
+  },
+
   price:Number,
   location:String,
   country:String
