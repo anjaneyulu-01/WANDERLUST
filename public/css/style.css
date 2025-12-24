@@ -95,6 +95,13 @@ font-weight:400 !important;
 
 /* show image */
 
-.show-img{
-  height:30vh;
+.show-img {
+  width: 85%;
+  min-height: 28rem;   
+  max-height: 32rem;    
+  object-fit: cover;
+  display: block;
+  margin: 0 auto;
 }
+
+
