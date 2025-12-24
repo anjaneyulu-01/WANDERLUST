@@ -92,3 +92,9 @@ font-weight:400 !important;
   background-color:#fe424d !important;
   border:none !important;
 }
+
+/* show image */
+
+.show-img{
+  height:30vh;
+}
