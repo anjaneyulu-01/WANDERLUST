@@ -6,7 +6,7 @@
       
       <h3 class="mb-4">Edit Listing</h3>
 
-      <form method="POST" action="/listings/<%= listing._id %>?_method=PUT">
+      <form method="POST" action="/listings/<%= listing._id %>?_method=PUT"  novalidate class="needs-validation">
         
         <div class="mb-3">
           <label for="title" class="form-label">Title</label>
@@ -15,7 +15,9 @@
             value="<%= listing.title %>"
             type="text"
             class="form-control"
+            required
           >
+        <div class="invalid-feedback">Enter correct Title</div>
         </div>
 
         <div class="mb-3">
@@ -23,7 +25,9 @@
           <textarea
             name="listing[description]"
             class="form-control"
+            required
           ><%= listing.description %></textarea>
+          <div class="invalid-feedback">Enter short description</div>
         </div>
 
         <div class="mb-3">
@@ -33,7 +37,9 @@
             value="<%= listing.image.url %>"
             type="text"
             class="form-control"
+            required
           >
+          <div class="invalid-feedback">Enter valid image url</div>
         </div>
         <div class="row">
         <div class="mb-3 col-md-4">
@@ -43,7 +49,9 @@
             value="<%= listing.price %>"
             type="number"
             class="form-control"
+            required
           >
+        <div class="invalid-feedback">Enter valid price</div>
         </div>
 
         <div class="mb-3 col-md-8">
@@ -53,7 +61,9 @@
             value="<%= listing.country %>"
             type="text"
             class="form-control"
+            required
           >
+          <div class="invalid-feedback">Enter your country</div>
         </div>
         </div>
         <div class="mb-3">
@@ -63,7 +73,9 @@
             value="<%= listing.location %>"
             type="text"
             class="form-control"
+            required
           >
+          <div class="invalid-feedback">Enter your location</div>
         </div>
 
         <button class="btn btn-dark mt-3">Submit</button>

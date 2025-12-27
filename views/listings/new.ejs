@@ -4,22 +4,32 @@
   <div class="col-8 offset-2">
   
   <h3>create a new post</h3>
-  <form method="POST" action="/listings">
+  <form method="POST" action="/listings" novalidate class="needs-validation">
    <div class="mb-3">
     <label for="title" class="form-label">Title</label>
    <input 
    name="listing[title]" 
    type="text" 
-   class="form-control">
+   class="form-control"
+   required
+   >
+   <div class="invalid-feedback">Enter correct Title</div>
    </div>
-   <div class="mb-3">
-    <label for="description" 
-    class="form-label">
-    Description</label>
-    <textarea  name="listing[description]" 
-    class="form-control">
-    </textarea>
-   </div>
+<div class="mb-3">
+  <label for="description" class="form-label">Description</label>
+
+  <textarea
+    id="description"
+    name="listing[description]"
+    class="form-control"
+    required
+  ></textarea>
+
+  <div class="invalid-feedback">
+    Please enter a short description
+  </div>
+</div>
+
    <div class="mb-3">
    <label for="url" class="form-label">Image Url</label>
    <input name="listing[image][url]" 
@@ -31,22 +41,28 @@
     <label for="price" class="form-label">Price</label>
     <input name="listing[price]" 
     type="number" 
-    placeholder="1200"
-    class="form-control">
-   </div>
+    class="form-control"
+    required
+    >
+   <div class="invalid-feedback">Price should be valid</div>
+  </div>
    <div class="mb-3 col-md-8">
      <label for="country" class="form-label">Country</label>
     <input name="listing[country]" 
     placeholder="India"
     type="text" 
-    class="form-control">
+    class="form-control"
+    required>
+    <div class="invalid-feedback">Please enter valid country</div>
    </div>
    </div>
    <div class="mb-3">
     <label for="location" class="form-label">Location</label>
     <input name="listing[location]" 
      type="text" 
-     class="form-control">
+     class="form-control"
+     required>
+     <div class="invalid-feedback">Please enter valid location</div>
    </div>
 
   <button class="btn add-btn mt-2 mb-3">Add</button>
