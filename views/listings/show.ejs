@@ -15,6 +15,22 @@
 
       <div class="card-body">
 
+        <% if (listing.owner) { %>
+        <p class="text-muted fst-italic mb-1">
+          Owned by: <%= listing.owner.username %>
+        </p>
+        <% } %>
+
+        <div class="mb-3">
+          <div class="stars-display text-warning">
+            <span class="star" data-value="1"></span>
+            <span class="star" data-value="2"></span>
+            <span class="star" data-value="3"></span>
+            <span class="star" data-value="4"></span>
+            <span class="star" data-value="5"></span>
+          </div>
+        </div>
+
         <p class="card-text">
           <%= listing.description %>
         </p>
@@ -29,7 +45,8 @@
       </div>
     </div>
 
-    <!-- Actions -->
+    <!-- Actions (owner only) -->
+    <% if (currUser && listing.owner && String(listing.owner._id) === String(currUser._id)) { %>
     <a 
       href="/listings/<%= listing._id %>/edit" 
       class="btn btn-primary me-2"
@@ -47,6 +64,7 @@
       </button>
       <br><br>
     </form>
+    <% } %>
 
   </div>
   <hr>
@@ -54,8 +72,29 @@
     <h4>Leave a Review </h4>
     <form method="POST" action="/listings/<%=listing._id%>/reviews" novalidate class="needs-validation">
      <div class="mb-3 mt-3">
-      <label for="rating" class="form-label">Rating</label>
-      <input type="range" min="1" max="5" id="rating" name="review[rating]" class="form-range" >
+      <label class="form-label d-block">Rating</label>
+      <div class="star-rating-input" id="ratingInput">
+        <input type="radio" name="review[rating]" value="1" id="rating-1" required>
+        <input type="radio" name="review[rating]" value="1.5" id="rating-1-5">
+        <input type="radio" name="review[rating]" value="2" id="rating-2">
+        <input type="radio" name="review[rating]" value="2.5" id="rating-2-5">
+        <input type="radio" name="review[rating]" value="3" id="rating-3" checked>
+        <input type="radio" name="review[rating]" value="3.5" id="rating-3-5">
+        <input type="radio" name="review[rating]" value="4" id="rating-4">
+        <input type="radio" name="review[rating]" value="4.5" id="rating-4-5">
+        <input type="radio" name="review[rating]" value="5" id="rating-5">
+        
+        <div class="stars-form-display text-warning">
+          <span class="star-form" data-value="1"></span>
+          <span class="star-form" data-value="2"></span>
+          <span class="star-form" data-value="3"></span>
+          <span class="star-form" data-value="4"></span>
+          <span class="star-form" data-value="5"></span>
+        </div>
+      </div>
+      <div class="invalid-feedback d-block">
+        Please select a rating
+      </div>
      </div>
      <div class="mb-3 mt-3">
       <label for="comment" class="form-label">Comment</label>
@@ -67,20 +106,240 @@
      <button class="btn btn-dark mb-3">Submit</button>
     </form>
   <hr>
+  <% if(listing.reviews.length > 0) { %>
    <p><b>All Reviews</b></p>
+  <% } %>
    <div class="row">
   <% for(review of listing.reviews) {%>
     <div class="card col-5 ms-3 mb-3">
      <div class="card-body">
-       <h5 class="card-title">anji</h5>
+       <h5 class="card-title">@<%= review.author ? review.author.username : "Deleted user" %></h5>
+       <div class="text-warning mb-2 star-display">
+        <% for(let i=1;i<=5;i++){ %>
+          <% if(review.rating >= i){ %>
+            <i class="fa-solid fa-star"></i>
+          <% } else if(review.rating >= i - 0.5){ %>
+            <i class="fa-solid fa-star-half-stroke"></i>
+          <% } else { %>
+            <i class="fa-regular fa-star"></i>
+          <% } %>
+        <% } %>
+        <span class="ms-2 text-dark"><%= review.rating %></span>
+       </div>
        <p class="card-text"><%=review.comment%></p>
-       <p class="card-text"><%= review.rating%> stars</p>
     </div>
+    <% if (currUser && review.author && String(review.author._id) === String(currUser._id)) { %>
     <form class="mb-3" method="Post" action="/listings/<%=listing._id%>/reviews/<%=review._id%>?_method=DELETE">
       <button class="btn btn-dark">Delete</button>
     </form>
+    <% } %>
     </div>
   <% } %>
   </div>
+  
+  <!-- Map Section - Full Width -->
+  <div style="margin-left: -12px; margin-right: -12px; margin-top: 2rem; margin-bottom: 2rem;">
+    <h4 class="mb-3" style="margin-left: 12px;">Location</h4>
+    <div id="map" 
+         data-title="<%- listing.title %>"
+         data-location="<%- listing.location %>"
+         data-country="<%- listing.country %>"
+         data-lat="<%= listing.geometry && listing.geometry.coordinates ? listing.geometry.coordinates[1] : '23.1815' %>"
+         data-lng="<%= listing.geometry && listing.geometry.coordinates ? listing.geometry.coordinates[0] : '79.9864' %>"
+         data-zoom="<%= listing.geometry && listing.geometry.coordinates ? '13' : '6' %>"
+         style="width: 100%; height: 22rem; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);"></div>
+  </div>
+  
+  <script>
+    // Initialize map when DOM is ready
+    function initMap() {
+      if (typeof L === 'undefined') {
+        console.error('Leaflet library not loaded');
+        return;
+      }
+
+      const mapEl = document.getElementById('map');
+      if (!mapEl) {
+        console.error('Map element not found');
+        return;
+      }
+
+      try {
+        const title = mapEl.dataset.title;
+        const location = mapEl.dataset.location;
+        const country = mapEl.dataset.country;
+        let lat = parseFloat(mapEl.dataset.lat);
+        let lng = parseFloat(mapEl.dataset.lng);
+        
+        // If we have valid coordinates from database, use them directly
+        if (lat !== 0 && lng !== 0 && !isNaN(lat) && !isNaN(lng)) {
+          console.log('Using database coordinates:', lat, lng);
+          initializeMapWithCoordinates(lat, lng, title, location, country);
+        } else {
+          // Use geocoding to convert address to coordinates
+          const address = location + ', ' + country;
+          console.log('Geocoding address:', address);
+          
+          fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(location)}&countrycodes=in&format=json&limit=1&addressdetails=1`)
+            .then(response => response.json())
+            .then(data => {
+              if (data.length > 0) {
+                lat = parseFloat(data[0].lat);
+                lng = parseFloat(data[0].lon);
+                
+                // Extract exact city from geocode result
+                if (data[0].address) {
+                  const geocodedCity = data[0].address.city 
+                                    || data[0].address.town 
+                                    || data[0].address.village 
+                                    || data[0].address.municipality
+                                    || data[0].address.district
+                                    || location;
+                  console.log('Geocoded to:', geocodedCity, 'Coordinates:', lat, lng);
+                  return initializeMapWithCoordinates(lat, lng, title, geocodedCity, country);
+                }
+              } else {
+                // If no result, try just the location without filters
+                console.log('No result for India, trying worldwide search');
+                return fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(location)}&format=json&limit=1&addressdetails=1`)
+                  .then(response => response.json())
+                  .then(secondData => {
+                    if (secondData.length > 0) {
+                      lat = parseFloat(secondData[0].lat);
+                      lng = parseFloat(secondData[0].lon);
+                      const geocodedCity = secondData[0].address.city 
+                                        || secondData[0].address.town 
+                                        || secondData[0].address.village 
+                                        || location;
+                      const geocodedCountry = secondData[0].address.country || country;
+                      console.log('Geocoded (worldwide):', geocodedCity, geocodedCountry);
+                      return initializeMapWithCoordinates(lat, lng, title, geocodedCity, geocodedCountry);
+                    } else {
+                      // Fallback to India center
+                      lat = 23.1815;
+                      lng = 79.9864;
+                      console.log('Geocoding failed, using India center');
+                      return initializeMapWithCoordinates(lat, lng, title, location, country);
+                    }
+                  });
+              }
+              return initializeMapWithCoordinates(lat, lng, title, location, country);
+            })
+            .catch(error => {
+              console.error('Geocoding error:', error);
+              // Fallback to India center
+              lat = 23.1815;
+              lng = 79.9864;
+              return initializeMapWithCoordinates(lat, lng, title, location, country);
+            });
+        }
+      } catch (error) {
+        console.error('Error initializing map:', error);
+      }
+    }
+
+    function initializeMapWithCoordinates(lat, lng, title, location, country) {
+      const mapEl = document.getElementById('map');
+      const zoom = parseInt(mapEl.dataset.zoom) || 6;
+      
+      // Create map with dragging and touch enabled
+      const map = L.map(mapEl, {
+        dragging: true,
+        tap: true,
+        touchZoom: true,
+        doubleClickZoom: true,
+        scrollWheelZoom: true,
+        boxZoom: true,
+        zoomControl: true,
+        keyboard: true
+      }).setView([lat, lng], zoom);
+
+      // Add tile layer
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors',
+        maxZoom: 19
+      }).addTo(map);
+
+      // Fetch full address details and create marker
+      fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&addressdetails=1&zoom=10`)
+        .then(response => response.json())
+        .then(data => {
+          const address = data.address || {};
+          
+          // Build detailed address string
+          const details = [];
+          details.push('<b>' + title + '</b>');
+          
+          if (address.street) details.push(address.street);
+          if (address.village) details.push(address.village);
+          if (address.city) details.push(address.city);
+          if (address.town) details.push(address.town);
+          if (address.municipality) details.push(address.municipality);
+          if (address.district) details.push(address.district);
+          if (address.county) details.push(address.county);
+          if (address.state) details.push(address.state);
+          if (address.postcode) details.push('PIN: ' + address.postcode);
+          if (address.country) details.push(address.country);
+          
+          const popupContent = details.join('<br>');
+          
+          // Add marker with full details
+          const marker = L.marker([lat, lng]).addTo(map);
+          marker.bindPopup(popupContent, {
+            autoClose: false,
+            closeButton: true,
+            maxWidth: 300
+          });
+          
+          // Show popup on hover
+          marker.on('mouseover', function() {
+            this.openPopup();
+          });
+          
+          marker.on('mouseout', function() {
+            this.closePopup();
+          });
+          
+          // Also open on click
+          marker.on('click', function() {
+            this.openPopup();
+          });
+          
+          console.log('Map initialized successfully at:', lat, lng, 'with full address');
+        })
+        .catch(error => {
+          console.error('Error fetching address details:', error);
+          
+          // Fallback marker if address fetch fails
+          const marker = L.marker([lat, lng])
+            .bindPopup('<b>' + title + '</b><br>' + location + ', ' + country, {
+              autoClose: false,
+              closeButton: true
+            })
+            .addTo(map);
+          
+          marker.on('mouseover', function() {
+            this.openPopup();
+          });
+          
+          marker.on('mouseout', function() {
+            this.closePopup();
+          });
+          
+          marker.on('click', function() {
+            this.openPopup();
+          });
+          
+          console.log('Map initialized successfully at:', lat, lng);
+        });
+    }
+
+    // Wait for page to load completely, then initialize map
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initMap);
+    } else {
+      initMap();
+    }
+  </script>
   </div>
 </div>

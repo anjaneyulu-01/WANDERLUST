@@ -1,3 +1,7 @@
+if(!process.env.NODE_ENV!="production"){
+  require('dotenv').config();
+}
+
 const express=require("express");
 const app=express();
 const mongoose = require("mongoose");
@@ -11,11 +15,24 @@ const flash = require("connect-flash");
 const passport =  require("passport");
 const LocalStrategy = require("passport-local");
 const User = require("./models/user.js");
+const multer = require("multer");
 
 
 const listingsRouter = require("./routes/listing.js");
 const reviewsRouter = require("./routes/review.js");
 const userRouter = require("./routes/user.js");
+
+// Multer configuration for image uploads
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, path.join(__dirname, "/public/uploads"));
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + "-" + file.originalname);
+  },
+});
+
+const upload = multer({ storage: storage });
 
 main().then((res)=>{
  console.log("connected to Db");
@@ -61,6 +78,7 @@ passport.deserializeUser(User.deserializeUser());
 app.use((req,res,next)=>{
   res.locals.success = req.flash("success");
   res.locals.error = req.flash("error");
+  res.locals.currUser = req.user;
   next();
 });
 

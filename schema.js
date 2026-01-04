@@ -10,7 +10,10 @@ module.exports.listingSchema = joi.object({
      image: joi.object({
        filename: joi.string().allow("",null),
        url: joi.string().allow("",null)
-     }).optional()
+     }).optional(),
+     geometry: joi.object({
+       coordinates: joi.array().items(joi.number()).length(2).optional()
+     }).optional().allow(null)
   }).required(),
 });
 
