@@ -1,4 +1,4 @@
-# Wanderlust - Airbnb Clone
+# Wanderlust 
 
 A full-stack vacation rental application built with Node.js, Express, and MongoDB Atlas. Users can browse listings, filter by category, view interactive maps, and manage their own properties.
 
