@@ -87,6 +87,11 @@ app.use((req,res,next)=>{
   next();
 });
 
+// Root route - redirect to listings (explore page)
+app.get("/", (req, res) => {
+  res.redirect("/listings");
+});
+
 app.use("/listings", listingsRouter);
 app.use("/listings/:id/reviews", reviewsRouter);
 app.use("/",userRouter);
