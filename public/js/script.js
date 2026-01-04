@@ -19,6 +19,54 @@
     })
 })()
 
+// Tax Toggle Functionality
+document.addEventListener('DOMContentLoaded', function() {
+  const taxToggleBtn = document.getElementById('taxToggleBtn');
+  const priceDisplays = document.querySelectorAll('.price-display');
+  const TAX_PERCENTAGE = 15; // 15% tax
+  let showTaxIncluded = false;
+
+  // Load saved preference from localStorage
+  const savedPreference = localStorage.getItem('showTaxIncluded');
+  if (savedPreference === 'true') {
+    showTaxIncluded = true;
+    if (taxToggleBtn) {
+      taxToggleBtn.checked = true;
+    }
+  }
+
+  if (taxToggleBtn) {
+    taxToggleBtn.addEventListener('change', function() {
+      showTaxIncluded = this.checked;
+      
+      // Save preference to localStorage
+      localStorage.setItem('showTaxIncluded', showTaxIncluded);
+      
+      // Update all price displays
+      updateAllPrices();
+    });
+  }
+
+  function updateAllPrices() {
+    priceDisplays.forEach(priceDisplay => {
+      const basePrice = parseInt(priceDisplay.dataset.basePrice);
+      let displayPrice;
+      
+      if (showTaxIncluded) {
+        const taxAmount = basePrice * (TAX_PERCENTAGE / 100);
+        displayPrice = Math.round(basePrice + taxAmount);
+      } else {
+        displayPrice = basePrice;
+      }
+      
+      priceDisplay.textContent = '₹' + displayPrice.toLocaleString('en-IN');
+    });
+  }
+
+  // Initialize with correct prices
+  updateAllPrices();
+});
+
 // Star rating functionality with half-star support
 document.addEventListener('DOMContentLoaded', function() {
   const starContainer = document.getElementById('ratingInput');
@@ -204,3 +252,19 @@ function confirmLocation() {
     alert('Please click on the map to select a location first.');
   }
 }
+// Category Filter functionality
+document.addEventListener('DOMContentLoaded', function() {
+  const filterItems = document.querySelectorAll('.filter-item');
+  
+  if (filterItems.length > 0) {
+    filterItems.forEach(item => {
+      item.addEventListener('click', function() {
+        // Get selected category
+        const category = this.dataset.category;
+        
+        // Redirect to listings page with category filter
+        window.location.href = `/listings?category=${category}`;
+      });
+    });
+  }
+});

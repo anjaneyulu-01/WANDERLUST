@@ -135,4 +135,246 @@ font-weight:400 !important;
   margin: 0 auto;
 }
 
+/* Airbnb-style Category Filters */
+.filters-container {
+  position: sticky;
+  top: 56px;
+  z-index: 999;
+  background: white;
+  border-bottom: 1px solid #e0e0e0;
+  padding: 16px 24px;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.filters {
+  display: flex;
+  gap: 32px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  flex: 1;
+}
+
+.filters::-webkit-scrollbar {
+  display: none;
+}
+
+.filter-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 0;
+  min-width: 64px;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s ease;
+  opacity: 0.7;
+  user-select: none;
+}
+
+.filter-item:hover {
+  opacity: 1;
+  border-bottom-color: #e0e0e0;
+}
+
+.filter-item.active {
+  opacity: 1;
+  border-bottom-color: #222;
+}
+
+.filter-item i {
+  font-size: 24px;
+  color: #717171;
+}
+
+.filter-item.active i {
+  color: #222;
+}
+
+.filter-item span {
+  font-size: 12px;
+  font-weight: 600;
+  color: #717171;
+  white-space: nowrap;
+}
+
+.filter-item.active span {
+  color: #222;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .filters {
+    gap: 24px;
+    padding: 0 16px;
+  }
+  
+  .filter-item {
+    min-width: 56px;
+  }
+  
+  .filter-item i {
+    font-size: 20px;
+  }
+  
+  .filter-item span {
+    font-size: 11px;
+  }
+}
+
+/* Simple Search Bar */
+.search-bar-simple {
+  display: flex;
+  align-items: center;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 40px;
+  padding: 8px 8px 8px 24px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.05);
+  transition: box-shadow 0.2s ease;
+  max-width: 400px;
+}
+
+.search-bar-simple:hover {
+  box-shadow: 0 2px 4px rgba(0,0,0,0.18);
+}
+
+.search-bar-simple input {
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 14px;
+  color: #222;
+  padding: 8px 16px;
+  width: 100%;
+  min-width: 250px;
+}
+
+.search-bar-simple input::placeholder {
+  color: #717171;
+}
+
+.search-button-simple {
+  background: #FF385C;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  flex-shrink: 0;
+}
+
+.search-button-simple:hover {
+  background: #E31C5F;
+}
+
+.search-button-simple i {
+  color: white;
+  font-size: 14px;
+}
+
+/* Mobile responsive for search */
+@media (max-width: 991px) {
+  .search-bar-simple {
+    max-width: 200px;
+  }
+  
+  .search-bar-simple input {
+    min-width: 120px;
+    font-size: 13px;
+  }
+}
+
+/* Tax Toggle Switch */
+.tax-switch-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+  padding: 12px 0;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.tax-switch-input {
+  display: none;
+}
+
+.tax-switch-slider {
+  position: relative;
+  width: 44px;
+  height: 24px;
+  background: #ccc;
+  border-radius: 12px;
+  transition: background 0.3s ease;
+  display: inline-block;
+}
+
+.tax-switch-slider::after {
+  content: '';
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background: white;
+  border-radius: 50%;
+  top: 2px;
+  left: 2px;
+  transition: left 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.tax-switch-input:checked + .tax-switch-slider {
+  background: #FF385C;
+}
+
+.tax-switch-input:checked + .tax-switch-slider::after {
+  left: 20px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+}
+
+.tax-switch-text {
+  font-size: 13px;
+  font-weight: 500;
+  color: #222;
+}
+
+.tax-switch-label:hover .tax-switch-slider::after {
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+
+/* Mobile responsive for tax toggle */
+@media (max-width: 768px) {
+  .tax-switch-label {
+    gap: 6px;
+  }
+  
+  .tax-switch-text {
+    font-size: 12px;
+  }
+  
+  .tax-switch-slider {
+    width: 40px;
+    height: 22px;
+  }
+  
+  .tax-switch-slider::after {
+    width: 18px;
+    height: 18px;
+  }
+  
+  .tax-switch-input:checked + .tax-switch-slider::after {
+    left: 18px;
+  }
+}
 

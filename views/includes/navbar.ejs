@@ -6,16 +6,26 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
       <div class="navbar-nav">
-        <a class="nav-link "  href="/">Home</a>
-        <a class="nav-link" href="/listings">All Listings</a>
-        <a class="nav-link" href="/listings/new">Add New Listing</a>
+        <a class="nav-link" href="/listings">Explore</a>
       </div>
+      
+      <!-- Simple Search Bar -->
+      <div class="mx-auto">
+        <div class="search-bar-simple">
+          <input type="text" placeholder="Search destinations..." id="searchInput">
+          <button class="search-button-simple" type="button">
+            <i class="fa-solid fa-magnifying-glass"></i>
+          </button>
+        </div>
+      </div>
+      
       <div class="navbar-nav ms-auto">
+        <a class="nav-link" href="/listings/new">Airbnb your home</a>
         <% if(!currUser) { %>
-        <a class="nav-link" href="/signup">SignUp</a>
-        <a class="nav-link" href="/login">Login</a>
+        <a class="nav-link fw-bold" href="/signup">SignUp</a>
+        <a class="nav-link fw-bold" href="/login">Login</a>
         <% } else { %>
-        <a class="nav-link" href="/logout">Logout</a>
+        <a class="nav-link fw-bold" href="/logout">Logout</a>
         <% } %>
       </div>
     </div>

@@ -9,8 +9,10 @@ const path=require("path");
 const methodOverride=require("method-override");
 const ejsMate=require("ejs-mate");
 const ExpressError = require("./utils/ExpressError.js");
-const MONGO_URL="mongodb://127.0.0.1:27017/wanderlust";
+// const MONGO_URL="mongodb://127.0.0.1:27017/wanderlust";
+const DB_URL=process.env.ATLAS_DB_URL;
 const session = require("express-session");
+const MongoStore = require("connect-mongo").default;
 const flash = require("connect-flash");
 const passport =  require("passport");
 const LocalStrategy = require("passport-local");
@@ -41,7 +43,7 @@ main().then((res)=>{
 })
 
 async function main(){
- await mongoose.connect(MONGO_URL);
+ await mongoose.connect(DB_URL);
 }
 
 app.use(express.urlencoded({ extended: true }));
@@ -54,7 +56,11 @@ app.engine("ejs",ejsMate);
 app.use(express.static(path.join(__dirname,"/public")));
 
 const sessionOptions = {
-  secret: "mysupersecretcode",
+  store: MongoStore.create({
+    mongoUrl: DB_URL,
+    touchAfter: 24 * 3600,
+  }),
+  secret: process.env.SESSION_SECRET || "mysupersecretcode",
   resave: false,
   saveUninitialized: true,
   cookie:{
@@ -82,9 +88,9 @@ app.use((req,res,next)=>{
   next();
 });
 
-app.get("/",(req,res)=>{
-  res.send("hey hii");
-});
+// app.get("/",(req,res)=>{
+//   res.render("/listings.ejs")
+// });
 
 app.use("/listings", listingsRouter);
 app.use("/listings/:id/reviews", reviewsRouter);

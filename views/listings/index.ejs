@@ -1,6 +1,63 @@
 <%- layout("/layouts/boilerplate.ejs")%>
 
-    <h1>All Listings</h1>
+<!-- Category Filters -->
+<div class="filters-container">
+  <div class="filters">
+    <div class="filter-item <%= selectedCategory === 'all' ? 'active' : '' %>" data-category="all">
+      <i class="fa-solid fa-grip"></i>
+      <span>All</span>
+    </div>
+    <div class="filter-item <%= selectedCategory === 'trending' ? 'active' : '' %>" data-category="trending">
+      <i class="fa-solid fa-fire"></i>
+      <span>Trending</span>
+    </div>
+    <div class="filter-item <%= selectedCategory === 'rooms' ? 'active' : '' %>" data-category="rooms">
+      <i class="fa-solid fa-bed"></i>
+      <span>Rooms</span>
+    </div>
+    <div class="filter-item <%= selectedCategory === 'iconic-cities' ? 'active' : '' %>" data-category="iconic-cities">
+      <i class="fa-solid fa-city"></i>
+      <span>Iconic Cities</span>
+    </div>
+    <div class="filter-item <%= selectedCategory === 'castles' ? 'active' : '' %>" data-category="castles">
+      <i class="fa-solid fa-chess-rook"></i>
+      <span>Castles</span>
+    </div>
+    <div class="filter-item <%= selectedCategory === 'pools' ? 'active' : '' %>" data-category="pools">
+      <i class="fa-solid fa-person-swimming"></i>
+      <span>Amazing Pools</span>
+    </div>
+    <div class="filter-item <%= selectedCategory === 'camping' ? 'active' : '' %>" data-category="camping">
+      <i class="fa-solid fa-campground"></i>
+      <span>Camping</span>
+    </div>
+    <div class="filter-item <%= selectedCategory === 'farms' ? 'active' : '' %>" data-category="farms">
+      <i class="fa-solid fa-tractor"></i>
+      <span>Farms</span>
+    </div>
+    <div class="filter-item <%= selectedCategory === 'arctic' ? 'active' : '' %>" data-category="arctic">
+      <i class="fa-solid fa-snowflake"></i>
+      <span>Arctic</span>
+    </div>
+    <div class="filter-item <%= selectedCategory === 'beach' ? 'active' : '' %>" data-category="beach">
+      <i class="fa-solid fa-umbrella-beach"></i>
+      <span>Beach</span>
+    </div>
+    <div class="filter-item <%= selectedCategory === 'mountains' ? 'active' : '' %>" data-category="mountains">
+      <i class="fa-solid fa-mountain"></i>
+      <span>Mountains</span>
+    </div>
+  </div>
+  
+  <!-- Tax Toggle Switch on Right -->
+  <label class="tax-switch-label">
+    <input type="checkbox" id="taxToggleBtn" class="tax-switch-input">
+    <span class="tax-switch-slider"></span>
+    <span class="tax-switch-text">Include Tax</span>
+  </label>
+</div>
+
+<h1>All Listings</h1>
   <div class="row row-cols-lg-3 row-cols-md-2 row-cols-sm-1">
     <% for(let Listing of allListings) {%>
      <a href="/listings/<%=Listing._id%>" class="listing-link">
@@ -14,7 +71,7 @@
       <div class="card-body">
       <h5 class="card-title">
       <b><%=Listing.title%></b><br>
-      &#8377;<%=Listing.price.toLocaleString("en-IN") %>/night
+      <span class="price-display" data-base-price="<%=Listing.price%>">₹<%=Listing.price.toLocaleString("en-IN") %></span>/night
       </h5>
       <p class="card-text"><%=Listing.description %></p>
      

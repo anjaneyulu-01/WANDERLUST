@@ -14,8 +14,28 @@ module.exports.validateListing = (req, res, next) => {
 };
 
 module.exports.index = async (req, res) => {
-  const allListings = await Listing.find({});
-  res.render("listings/index", { allListings });
+  const { category } = req.query;
+  let filter = {};
+  
+  if (category && category !== 'all') {
+    // Convert URL format (e.g., 'iconic-cities') to model format (e.g., 'Iconic Cities')
+    const categoryMap = {
+      'trending': 'Trending',
+      'rooms': 'Rooms',
+      'iconic-cities': 'Iconic Cities',
+      'castles': 'Castles',
+      'pools': 'Pools',
+      'camping': 'Camping',
+      'farms': 'Farms',
+      'arctic': 'Arctic',
+      'beach': 'Beach',
+      'mountains': 'Mountains'
+    };
+    filter.category = categoryMap[category];
+  }
+  
+  const allListings = await Listing.find(filter);
+  res.render("listings/index", { allListings, selectedCategory: category || 'all' });
 };
 
 module.exports.renderNewForm = (req, res) => {

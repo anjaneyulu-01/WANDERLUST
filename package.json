@@ -9,10 +9,14 @@
   "keywords": [],
   "author": "anji",
   "license": "ISC",
+  "engines": {
+    "node": ">=14.0.0"
+  },
   "type": "commonjs",
   "dependencies": {
     "cloudinary": "^2.8.0",
     "connect-flash": "^0.1.1",
+    "connect-mongo": "^6.0.0",
     "cookie-parser": "^1.4.7",
     "dotenv": "^17.2.3",
     "ejs": "^3.1.10",
