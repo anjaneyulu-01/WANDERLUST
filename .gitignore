@@ -44,7 +44,7 @@ Thumbs.db
 .idea/
 *.swp
 *.swo
-
+.htmlhintrc
 # Optional npm cache directory
 .npm
 
