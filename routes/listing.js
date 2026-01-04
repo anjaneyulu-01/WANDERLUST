@@ -4,7 +4,6 @@ const wrapAsync = require("../utils/wrapAsync.js");
 const {isLoggedIn, isOwner}=require("../middleware.js");
 const listingController = require("../controllers/listing.js");
 const { upload } = require("../config/cloudinary.js");
-require("dotenv").config();
 
 // index + create
 router

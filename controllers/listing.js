@@ -3,6 +3,33 @@ const ExpressError = require("../utils/ExpressError.js");
 const {listingSchema} = require("../schema.js");
 const { cloudinary } = require("../config/cloudinary.js");
 
+// Helper function to safely delete images from Cloudinary
+const deleteCloudinaryImage = async (filename) => {
+  try {
+    // Only attempt to delete if Cloudinary is configured with real credentials
+    if (process.env.CLOUD_NAME && 
+        process.env.CLOUD_API_KEY && 
+        process.env.CLOUD_API_SECRET &&
+        !process.env.CLOUD_NAME.includes("your_")) {
+      await cloudinary.uploader.destroy(filename);
+    }
+  } catch (err) {
+    console.log("Warning: Could not delete image from storage:", err.message);
+  }
+};
+
+// Normalize uploaded file info so the browser can load it
+// If using Cloudinary: file.path is already a public https URL
+// If using local disk: expose it under /uploads/<filename>
+const buildImagePayload = (file) => {
+  if (!file) return null;
+  const isCloudUrl = file.path && file.path.startsWith("http");
+  return {
+    url: isCloudUrl ? file.path : `/uploads/${file.filename}`,
+    filename: file.filename,
+  };
+};
+
 module.exports.validateListing = (req, res, next) => {
   let { error } = listingSchema.validate(req.body);
   if (error) {
@@ -48,8 +75,10 @@ module.exports.createListing = async (req, res) => {
   
   // Handle file upload (Cloudinary)
   if (req.file) {
-    newListing.image.url = req.file.path;
-    newListing.image.filename = req.file.filename;
+    const image = buildImagePayload(req.file);
+    if (image) {
+      newListing.image = image;
+    }
   }
   
   await newListing.save();
@@ -90,18 +119,14 @@ module.exports.updateListing = async (req, res) => {
   if (req.file) {
     // Delete old image from Cloudinary if it exists
     if (existingListing.image && existingListing.image.filename) {
-      try {
-        await cloudinary.uploader.destroy(existingListing.image.filename);
-      } catch (err) {
-        console.log("Error deleting old image from Cloudinary:", err);
-      }
+      await deleteCloudinaryImage(existingListing.image.filename);
     }
     
     // Set new image
-    updateData.image = { 
-      url: req.file.path,
-      filename: req.file.filename 
-    };
+    const image = buildImagePayload(req.file);
+    if (image) {
+      updateData.image = image;
+    }
   } else if (!updateData.image || !updateData.image.url) {
     // If no file uploaded and no URL provided, remove image from updateData
     // This will preserve the existing image in the database
@@ -123,11 +148,7 @@ module.exports.destroyListing = async (req, res) => {
   
   // Delete image from Cloudinary if it exists
   if (list.image && list.image.filename) {
-    try {
-      await cloudinary.uploader.destroy(list.image.filename);
-    } catch (err) {
-      console.log("Error deleting image from Cloudinary:", err);
-    }
+    await deleteCloudinaryImage(list.image.filename);
   }
   
   req.flash("success", "listing Deleted");

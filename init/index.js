@@ -17,56 +17,9 @@ const initDB = async () => {
     // Clear existing data
     await Listing.deleteMany({});
     await Review.deleteMany({});
-    await User.deleteMany({});
 
-    // Create test users
-    const users = await User.create([
-      {
-        username: "anji",
-        email: "anji@wanderlust.com",
-        password: "anji"
-      },
-      {
-        username: "rahul",
-        email: "rahul@wanderlust.com",
-        password: "rahul"
-      },
-      {
-        username: "santhosh",
-        email: "santhosh@wanderlust.com",
-        password: "santhosh"
-      },
-      {
-        username: "akash",
-        email: "akash@wanderlust.com",
-        password: "akash"
-      },
-      {
-        username: "ashok",
-        email: "ashok@wanderlust.com",
-        password: "ashok"
-      },
-      {
-        username: "ashrith",
-        email: "ashrith@wanderlust.com",
-        password: "ashrith"
-      },
-      {
-        username: "abhi",
-        email: "abhi@wanderlust.com",
-        password: "abhi"
-      }
-    ]);
-
-    console.log(`✅ ${users.length} users created`);
-
-    // Create listings with distributed ownership
-    const listingsWithOwner = initData.data.map((listing, index) => ({
-      ...listing,
-      owner: users[index % users.length]._id
-    }));
-
-    const createdListings = await Listing.insertMany(listingsWithOwner);
+    // Seed listings only (users added via signup)
+    const createdListings = await Listing.insertMany(initData.data);
     console.log(`✅ ${createdListings.length} listings created`);
     console.log("✅ Database initialization complete!");
     process.exit(0);

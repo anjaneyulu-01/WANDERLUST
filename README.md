@@ -2,6 +2,26 @@
 
 A full-stack vacation rental application built with Node.js, Express, and MongoDB Atlas. Users can browse listings, filter by category, view interactive maps, and manage their own properties.
 
+## 🚀 Quick Start
+
+```bash
+# 1. Copy environment template
+cp .env.example .env
+
+# 2. Edit .env with your credentials (MongoDB, Cloudinary)
+nano .env
+
+# 3. Install & run
+npm install
+npm start
+```
+
+Visit `http://localhost:3006`
+
+**For complete setup & deployment guide:** See [SETUP_AND_DEPLOYMENT.md](SETUP_AND_DEPLOYMENT.md)
+
+---
+
 ## 🌟 Features
 
 ### Core Functionality

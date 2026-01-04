@@ -9,7 +9,6 @@ const path=require("path");
 const methodOverride=require("method-override");
 const ejsMate=require("ejs-mate");
 const ExpressError = require("./utils/ExpressError.js");
-// const MONGO_URL="mongodb://127.0.0.1:27017/wanderlust";
 const DB_URL=process.env.ATLAS_DB_URL;
 const session = require("express-session");
 const MongoStore = require("connect-mongo").default;
@@ -60,7 +59,7 @@ const sessionOptions = {
     mongoUrl: DB_URL,
     touchAfter: 24 * 3600,
   }),
-  secret: process.env.SESSION_SECRET || "mysupersecretcode",
+  secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: true,
   cookie:{
@@ -88,10 +87,6 @@ app.use((req,res,next)=>{
   next();
 });
 
-// app.get("/",(req,res)=>{
-//   res.render("/listings.ejs")
-// });
-
 app.use("/listings", listingsRouter);
 app.use("/listings/:id/reviews", reviewsRouter);
 app.use("/",userRouter);
@@ -101,11 +96,11 @@ app.use((req,res,next)=>{
 });
 
 app.use((err,req,res,next)=>{
-let {statusCode=500, message="something went wrong"} = err;
-res.status(statusCode).render("error.ejs",{message})
-// res.status(statusCode).send(message);
+  let {statusCode=500, message="something went wrong"} = err;
+  res.status(statusCode).render("error.ejs",{message});
 }); 
 
-app.listen(3006,()=>{
-  console.log("server is listening to port : 3006");
+const PORT = process.env.PORT || 3006;
+app.listen(PORT,()=>{
+  console.log(`server is listening to port : ${PORT}`);
 });
